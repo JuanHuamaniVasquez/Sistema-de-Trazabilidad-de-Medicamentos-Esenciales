@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>// --- Estados del lote (los manejamos como constantes tipo enum)
+const int NoRegistrado = 0;
+const int Activo       = 1;
+const int Agotado      = 2;
+const int Inactivo     = 3;
+
+// Tipo del estado
+typedef int[0,3] estado_t;
+
+// Variables globales del modelo (1 lote)
+estado_t estado = NoRegistrado;
+int[0,100] cantidad = 0;
+</declaration>
+	<template>
+		<name x="5" y="5">Template</name>
+		<declaration>// Variables auxiliares para transiciones
+int[1,100] cantInicial;
+int[1,100] cantDisp;
+</declaration>
+		<location id="id0" x="-739" y="-187">
+			<name x="-749" y="-221">NoRegistrado</name>
+		</location>
+		<location id="id1" x="-340" y="-187">
+			<name x="-331" y="-221">Activo</name>
+		</location>
+		<location id="id2" x="-340" y="25">
+			<name x="-350" y="-9">Agotado</name>
+		</location>
+		<location id="id3" x="-739" y="25">
+			<name x="-807" y="-8">Inactivo</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id4">
+			<source ref="id3"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-764" y="59">true</label>
+			<nail x="-739" y="59"/>
+			<nail x="-764" y="59"/>
+		</transition>
+		<transition id="id5">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-578" y="0">true</label>
+			<label kind="assignment" x="-578" y="25">estado = Inactivo</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id1"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-603" y="-85">true</label>
+			<label kind="assignment" x="-603" y="-51">estado = Inactivo</label>
+		</transition>
+		<transition id="id7">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="select" x="-331" y="-110">cantDisp : int[1,100]</label>
+			<label kind="guard" x="-331" y="-93">estado == Activo &amp;&amp; cantDisp == cantidad</label>
+			<label kind="assignment" x="-331" y="-59">cantidad = 0, estado = Agotado</label>
+		</transition>
+		<transition id="id8">
+			<source ref="id1"/>
+			<target ref="id1"/>
+			<label kind="select" x="-331" y="-340">cantDisp : int[1,100]</label>
+			<label kind="guard" x="-331" y="-323">estado == Activo &amp;&amp; cantDisp &lt; cantidad</label>
+			<label kind="assignment" x="-331" y="-289">cantidad = cantidad - cantDisp</label>
+			<label kind="comments" x="-493" y="-365">Dispensar parcial</label>
+			<nail x="-340" y="-340"/>
+			<nail x="-391" y="-340"/>
+		</transition>
+		<transition id="id9">
+			<source ref="id1"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-306" y="-144">estado == Activo</label>
+			<label kind="comments" x="-161" y="-178">MoverLote</label>
+			<nail x="-323" y="-170"/>
+			<nail x="-170" y="-144"/>
+			<nail x="-170" y="-187"/>
+		</transition>
+		<transition id="id10">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="select" x="-620" y="-229">cantInicial : int[1,100]</label>
+			<label kind="guard" x="-620" y="-212">cantInicial &gt; 0</label>
+			<label kind="assignment" x="-621" y="-178">cantidad = cantInicial, 
+estado = Activo</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+Process = Template();
+// List one or more processes to be composed into a system.
+system Process;
+
+</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock
+</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-11-21 01:02:28 -0500">
+			</result>
+		</query>
+		<query>
+			<formula>E&lt;&gt; Process.Agotado
+</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-11-21 01:02:22 -0500">
+			</result>
+		</query>
+		<query>
+			<formula>A[] (Process.Activo imply cantidad &gt; 0)
+</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-11-21 01:02:08 -0500">
+			</result>
+		</query>
+		<query>
+			<formula>A[] cantidad &gt;= 0
+</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-11-21 00:59:31 -0500">
+			</result>
+		</query>
+	</queries>
+</nta>
