@@ -1,0 +1,74 @@
+class Test
+
+types
+public EventType = <Ingreso> | <Movimiento> | <Dispensacion> | <Baja>;
+public Date = nat1 * nat1 * nat1;
+instance variables
+  med1  : Medicamento := new Medicamento(1, "Paracetamol");
+  lote1 : Lote := new Lote(1, med1, 100, mk_(2025, 10, 22), "Almacen A");
+  s     : Sistema    := new Sistema();
+  lote2 : Lote := new Lote(2, med1, 50, mk_(2025, 12, 31), "Depo Central");
+
+operations
+
+public Test: () ==> Test
+Test() == skip;
+
+public testMedicamento: () ==> ()
+testMedicamento() ==
+(
+  dcl idM  : nat1        := med1.getId();
+  dcl nomM : seq of char := med1.getNombre();
+  return
+);
+
+public testLote: () ==> ()
+testLote() ==
+(
+  dcl idL   : nat1        := lote1.getId();
+  dcl cantL : nat         := lote1.getCantidad();
+  dcl ubiL  : seq of char := lote1.getUbicacion();
+  lote1.Mover("Almacen B");
+  lote1.Dispensar(20);
+  lote1.DarDeBaja();
+    return
+);
+
+public testEvento: () ==> ()
+testEvento() ==
+(
+  dcl e : Evento := new Evento(<Ingreso>, 1, 100, mk_(2025, 10, 22));
+  dcl t  : EventType := e.getTipo();
+  dcl lid: nat1      := e.getLoteId();
+  dcl c  : nat       := e.getCantidad();
+  dcl f  : Date      := e.getFecha();
+    return
+);
+
+public testSistema: () ==> ()
+testSistema() ==
+(
+  s.IngresarLote(lote2);
+  s.Dispensar(2, 10);
+  s.MoverLote(lote2, 2, "Depo Sur");
+  s.DarDeBaja(2)
+);
+
+public testConsultarEventos: () ==> ()
+testConsultarEventos() ==
+(
+  dcl evs : seq of Evento;
+  evs := s.ConsultarEventos(2)
+);
+
+public testAll: () ==> ()
+testAll() ==
+(
+  testMedicamento();
+  testLote();
+  testEvento();
+  testSistema();
+  testConsultarEventos()
+);
+
+end Test

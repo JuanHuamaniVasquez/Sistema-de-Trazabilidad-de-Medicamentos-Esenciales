@@ -1,0 +1,22 @@
+class Medicamento
+
+instance variables
+id : nat1;
+nombre : seq of char;
+
+operations
+public Medicamento: nat1 * seq of char ==> Medicamento
+Medicamento(i, n) ==
+(
+  id := i;
+  nombre := n
+)
+post nombre <> [];
+
+public getId: () ==> nat1
+getId() == return id;
+
+public getNombre: () ==> seq of char
+getNombre() == return nombre;
+
+end Medicamento

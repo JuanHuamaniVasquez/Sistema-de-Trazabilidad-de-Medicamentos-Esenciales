@@ -1,0 +1,50 @@
+class Lote
+
+types
+public fecha = nat1 * nat1 * nat1;
+
+instance variables
+  public id : nat1;
+  med : Medicamento;
+  cantidad : nat;
+  vencimiento : fecha;
+  ubicacion : seq of char;
+  activo : bool := true;
+
+operations
+public Lote: nat1 * Medicamento * nat * fecha * seq of char ==> Lote
+Lote(i, m, c, v, u) ==
+(
+  id := i;
+  med := m;
+  cantidad := c;
+  vencimiento := v;
+  ubicacion := u;
+  activo := true
+)
+pre c > 0;
+
+public getId: () ==> nat1
+getId() == return id;
+
+public getCantidad: () ==> nat
+getCantidad() == return cantidad;
+
+public getUbicacion: () ==> seq of char
+getUbicacion() == return ubicacion;
+
+public Mover: seq of char ==> ()
+Mover(nuevaUbicacion) ==
+  ubicacion := nuevaUbicacion
+pre activo;
+
+public Dispensar: nat ==> ()
+Dispensar(cant) ==
+  cantidad := cantidad - cant
+pre activo and cant <= cantidad;
+
+public DarDeBaja: () ==> ()
+DarDeBaja() ==
+  activo := false;
+
+end Lote

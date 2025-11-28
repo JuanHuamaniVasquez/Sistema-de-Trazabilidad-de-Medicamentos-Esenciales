@@ -1,0 +1,54 @@
+class Sistema
+
+types
+public Date = nat1 * nat1 * nat1;
+
+instance variables
+  lotes : map nat1 to Lote := {|->};
+  public eventos : seq of Evento := [];
+
+operations
+public IngresarLote: Lote ==> ()
+IngresarLote(l) ==
+(
+  lotes := lotes ++ {l.getId() |-> l};
+  let e = new Evento(<Ingreso>, l.getId(), l.getCantidad(), today())
+  in eventos := eventos ^ [e]
+);
+
+public Dispensar: nat1 * nat ==> ()
+Dispensar(loteId, cantidad) ==
+(
+  lotes(loteId).Dispensar(cantidad);
+  eventos := eventos ^ [new Evento(<Dispensacion>, loteId, cantidad, today())]
+);
+  
+public MoverLote: Lote * nat1 * seq of char ==> ()
+MoverLote(l,loteId, nuevaUbicacion) ==
+(
+  lotes(loteId).Mover(nuevaUbicacion);
+  eventos := eventos ^ [new Evento(<Movimiento>, loteId, l.getCantidad(), today())]
+)
+pre loteId in set dom lotes;
+
+public DarDeBaja: nat1 ==> ()
+DarDeBaja(loteId) ==
+(
+  lotes(loteId).DarDeBaja();
+  eventos := eventos ^ [new Evento(<Baja>, loteId, 0, today())]
+)
+pre loteId in set dom lotes;
+
+public ConsultarEventos: nat1 ==> seq of Evento
+ConsultarEventos(loteId) ==
+(
+  dcl result : seq of Evento;
+  result := [ eventos(e) | e in set inds eventos & eventos(e).getLoteId() = loteId ];
+  return result;
+);
+
+functions
+  today: () -> Date
+  today() == mk_(2025, 11, 13);
+
+end Sistema

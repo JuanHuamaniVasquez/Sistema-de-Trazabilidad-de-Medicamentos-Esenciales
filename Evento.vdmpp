@@ -1,0 +1,36 @@
+class Evento
+
+types
+public Date = nat1 * nat1 * nat1;
+public EventType = <Ingreso> | <Movimiento> | <Dispensacion> | <Baja>;
+
+instance variables
+tipo : EventType;
+loteId : nat1;
+cantidad : nat;
+fecha : Date;
+
+operations
+public Evento: EventType * nat1 * nat * Date ==> Evento
+Evento(t, l, c, f) ==
+(
+    tipo := t;
+    loteId := l;    
+    cantidad := c;
+    fecha := f
+)
+pre c >= 0;
+
+public getTipo: () ==> EventType
+getTipo() == return tipo;
+
+public getLoteId: () ==> nat1
+getLoteId() == return loteId;
+
+public getCantidad: () ==> nat
+getCantidad() == return cantidad;
+
+public getFecha: () ==> Date
+getFecha() == return fecha;
+
+end Evento
